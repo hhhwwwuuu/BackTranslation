@@ -1,5 +1,6 @@
 # BackTranslation
 [![version](https://img.shields.io/badge/version-0.1-blue)](https://pypi.org/project/BackTranslation/#description)
+[![Downloads](https://pepy.tech/badge/backtranslation)](https://pepy.tech/project/backtranslation)
 [![license](https://img.shields.io/badge/license-MIT-green)](https://github.com/hhhwwwuuu/BackTranslation/blob/main/LICENSE)
 
 BackTranslation is a python library that implemented to back translate the words among any two languages. This utilizes [googletrans](https://py-googletrans.readthedocs.io/en/latest/) library to translate the words.
