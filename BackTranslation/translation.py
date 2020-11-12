@@ -53,8 +53,7 @@ class BackTranslation(object):
         # check the length of text
         if len(text) > self.MAX_LENGTH:
             original_sentences = self._split_segement(sent_tokenize(text))
-            print(original_sentences)
-            #for sentence in original_sentences:
+
             t_text = self.translator.translate(original_sentences, src=src, dest=tmp)
             tran_text = ' '.join([t.text for t in t_text])
             time.sleep(sleeping)

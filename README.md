@@ -3,7 +3,7 @@
 [![Downloads](https://pepy.tech/badge/backtranslation)](https://pepy.tech/project/backtranslation)
 [![license](https://img.shields.io/badge/license-MIT-green)](https://github.com/hhhwwwuuu/BackTranslation/blob/main/LICENSE)
 
-BackTranslation is a python library that implemented to back translate the words among any two languages. This utilizes [googletrans](https://py-googletrans.readthedocs.io/en/latest/) library to translate the words.
+BackTranslation is a python library that implemented to back translate the words among any two languages. This utilizes [googletrans](https://py-googletrans.readthedocs.io/en/latest/) library and [Baidu Translation API](http://api.fanyi.baidu.com/) to translate the words.
 
 Since there is an error in current verison of googletrans, you have to create only one instance to do back-translation for your work. Otherwise, it is easy to cause a bug from multi-requests. We will keep implementing this library with other translator libraries soon.
 
@@ -49,3 +49,4 @@ trans.searchLanguage('Chinese')
 
 ## reference
 - [googletrans](https://py-googletrans.readthedocs.io/en/latest/)
+- [Baidu Translation API](http://api.fanyi.baidu.com/)
