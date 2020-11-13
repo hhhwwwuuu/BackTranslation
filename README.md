@@ -18,13 +18,23 @@ $ pip install BackTranslation
 
 
 ## Usage
-### Backtranslation
+### Backtranslation with googletrans
 Translate the original text to other language and translate back to augment the diversity of data in NLP research.
+
 Parameters:
 * **text**: required. Original text that need to do back translation.
 * **src**: option. Source language code of original text. If this parameter is None, the method will detect the language of text automatically. (Default: None)
 * **tmp**: option. Middle language code. If this parameter is None, the method will pick one of two languages which is different from src.
 * **sleeping**: option. It is a timer to limite the speed of back-translation to avoid the limitation of Google.  (Default: 0)
+
+Return parameter: object _Translated_.
+
+Attributes:
+* source_text: original sentence.
+* src: the language of original sentence
+* tmp: the target language as middle man
+* trans_text: intermediate result
+* back_text: back-tranlsated result
 
 ```python
 from BackTranslation import BackTranslation
@@ -34,8 +44,12 @@ print(result.result_text)
 # 'Hello there'
 ```
 
-### Search the language code
+
+Note: You just need to create one instance of _BackTranslation_ in order to avoid [the issue in current version of googletrans](https://github.com/ssut/py-googletrans/issues/234#issuecomment-726067552). 
+
+#### Search the language code
 You may find out your language code with full language name by using this method.
+
 Parameters:
 * **language**: required. A language name in english.
 
@@ -45,7 +59,25 @@ trans = BackTranslation()
 trans.searchLanguage('Chinese')
 # {'chinese (simplified)': 'zh-cn', 'chinese (traditional)': 'zh-tw'}
 ```
+### Backtranslation_Baidu with Baidu Translation API
+To use this stable translation, you are required to register in [Baidu Translation API]((http://api.fanyi.baidu.com/)) for getting your own appID.
+It supports 2 million chacters per day for free.
+_Note: Currently, they only support Chinese phone number to register the accout._
+````python
+from BackTranslation import BackTranslation_Baidu
+trans = BackTranslation_Baidu(appid='YOUR APPID', secretKey='YOUR SECRETKEY')
+result = trans.translate('hello', src='auto', tmp='zh')
+print(result.result_text)
+# 'hello'
+trans.closeHTTP()
+```` 
+#### Seach language code
+Since Baidu provides the different language code, it will be updated soon.
 
+
+## Version Information
+Version 0.2: support back-translation with Baidu API, and fix bugs
+Version 0.1: support back-translation with googletrans library
 
 ## reference
 - [googletrans](https://py-googletrans.readthedocs.io/en/latest/)
