@@ -77,6 +77,7 @@ Since Baidu provides the different language code, it will be updated soon.
 
 ## Version Information
 Version 0.2: support back-translation with Baidu API, and fix bugs
+
 Version 0.1: support back-translation with googletrans library
 
 ## reference
