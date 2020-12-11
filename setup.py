@@ -3,7 +3,7 @@ import setuptools
 
 setup(
     name = 'BackTranslation',
-    version = "0.2",
+    version = "0.2.1",
     author = "Zhiqiang Wu",
     author_email = "wzq0515@gmail.com",
     license = "MIT",
@@ -20,5 +20,5 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3.0",
     ),
-    install_requires = ['googletrans', 'nltk']
+    install_requires = ['googletrans==4.0.0rc1', 'nltk']
 )
