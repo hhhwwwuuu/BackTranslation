@@ -1,0 +1,10 @@
+language: python
+python:
+  - 3.6
+  - 3.7
+  - 3.8
+install:
+  - pip install nltk
+  - pip install googletrans==4.0.0rc1
+script:
+  - pytest
