@@ -1,5 +1,5 @@
 # BackTranslation
-[![version](https://img.shields.io/badge/version-0.2.1-blue)](https://pypi.org/project/BackTranslation/#description)
+[![version](https://img.shields.io/badge/version-0.2.2-blue)](https://pypi.org/project/BackTranslation/#description)
 [![Downloads](https://pepy.tech/badge/backtranslation)](https://pepy.tech/project/backtranslation)
 [![license](https://img.shields.io/badge/license-MIT-green)](https://github.com/hhhwwwuuu/BackTranslation/blob/main/LICENSE)
 
