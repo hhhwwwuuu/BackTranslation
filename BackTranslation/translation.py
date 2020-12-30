@@ -22,8 +22,8 @@ class BackTranslation(object):
     Otherwise, an error will occur from googletrans.
 
     """
-    def __init__(self):
-        self.translator = Translator()
+    def __init__(self, url=['translate.google.com']):
+        self.translator = Translator(service_urls=url)
         self.Languages = LANGUAGES
         self.langCodes = LANG_CODES
         self.MAX_LENGTH = 5000
