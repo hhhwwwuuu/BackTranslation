@@ -4,12 +4,13 @@ from nltk.tokenize import sent_tokenize
 import time
 from BackTranslation.languages import LANGUAGES, LANG_CODES
 from BackTranslation.translated import Translated
+import typing
+import httpcore
 
 try:
     nltk.data.find('tokenizers/punkt')
 except LookupError:
     nltk.download('punkt')
-
 
 
 class BackTranslation(object):
@@ -22,14 +23,14 @@ class BackTranslation(object):
     Otherwise, an error will occur from googletrans.
 
     """
-    def __init__(self, url=['translate.google.com']):
-        self.translator = Translator(service_urls=url)
+
+    def __init__(self, url=['translate.google.com'], proxies: typing.Dict[str, httpcore.SyncHTTPTransport] = None):
+        self.translator = Translator(service_urls=url, proxies=proxies)
         self.Languages = LANGUAGES
         self.langCodes = LANG_CODES
         self.MAX_LENGTH = 5000
 
-
-    def translate(self, text, src = None, tmp = None, sleeping = 0):
+    def translate(self, text, src=None, tmp=None, sleeping=0):
 
         if not src:
             src = self.translator.detect(text).lang
@@ -48,7 +49,8 @@ class BackTranslation(object):
             raise ValueError("'{}': INVALID transited language.".format(tmp))
 
         if src == tmp:
-            raise ValueError("Transited language ({tmp}) should different from srouce language ({src}).".format(tmp=self.langCodes[tmp], src=self.langCodes[src]))
+            raise ValueError("Transited language ({tmp}) should different from srouce language ({src}).".format(
+                tmp=self.langCodes[tmp], src=self.langCodes[src]))
 
         # check the length of text
         if len(text) > self.MAX_LENGTH:
@@ -69,10 +71,6 @@ class BackTranslation(object):
         result = Translated(src_lang=src, tmp_lang=tmp, text=text, trans_text=tran_text, back_text=back_text)
         return result
 
-
-
-
-
     def _split_segement(self, sentences):
         """
         Split the long sentences into multiple sentences whose lengths are less than MAX_LENGTH.
@@ -91,7 +89,6 @@ class BackTranslation(object):
                 block = block + sentence + ' '
         sentences_list.append(block.rstrip())
         return sentences_list
-
 
     def searchLanguage(self, language):
         """
@@ -117,5 +114,3 @@ class BackTranslation(object):
                 return {lan: self.langCodes[lan] for lan in language_list}
             else:
                 raise ValueError("{}: No existing language.".format(language))
-
-

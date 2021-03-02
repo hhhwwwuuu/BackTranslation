@@ -23,6 +23,8 @@ Translate the original text to other language and translate back to augment the 
 
 Parameters:
 * **url**: option. provide a list of services urls for translation if need. Default url is _translate.google.com_.
+* **proxies**: Optional. Proxies configuration. Dictionary mapping protocol or protocol and host to the URL of the proxy.
+  i.e. proxies = {'http': '127.0.0.1:1234', 'http://host.name': '127.0.0.1:4012'}
 * **text**: required. Original text that need to do back translation.
 * **src**: option. Source language code of original text. If this parameter is None, the method will detect the language of text automatically. (Default: None)
 * **tmp**: option. Middle language code. If this parameter is None, the method will pick one of two languages which is different from src.
@@ -80,7 +82,7 @@ Since Baidu provides the different language code, it will be updated soon.
 
 
 ## Version Information
-**Version 0.2.2: fix the services url for Google Translator. **
+**Version 0.2.2: fix the services url for Google Translator.**
 
 Version 0.2.1: fix the small bug. From this version, the library googletrans version is [4.0.0rc1](https://pypi.org/project/googletrans/4.0.0rc1/).
 

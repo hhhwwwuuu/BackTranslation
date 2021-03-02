@@ -3,7 +3,7 @@ import setuptools
 
 setup(
     name = 'BackTranslation',
-    version = "0.2.2",
+    version = "0.3.0",
     author = "Zhiqiang Wu",
     author_email = "wzq0515@gmail.com",
     license = "MIT",
