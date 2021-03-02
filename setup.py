@@ -15,10 +15,11 @@ setup(
     python_requires='>=3',
     packages=setuptools.find_packages(),
     keywords = ['Translation', 'NLP', 'back-translation'],
-    classifiers=(
+    classifiers=[
+        'Development Status :: 4 - Beta',
         "Operating System :: OS Independent",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3.0",
-    ),
+    ],
     install_requires = ['googletrans==4.0.0rc1', 'nltk']
 )
