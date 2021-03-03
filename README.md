@@ -44,7 +44,7 @@ from BackTranslation import BackTranslation
 trans = BackTranslation(url=[
       'translate.google.com',
       'translate.google.co.kr',
-    ])
+    ], proxies={'http': '127.0.0.1:1234', 'http://host.name': '127.0.0.1:4012'})
 result = trans.translate('hello', src='en', tmp = 'zh-cn')
 print(result.result_text)
 # 'Hello there'
