@@ -1,5 +1,5 @@
 # BackTranslation
-[![version](https://img.shields.io/badge/version-0.2.2-blue)](https://pypi.org/project/BackTranslation/#description)
+[![version](https://img.shields.io/badge/version-0.3.1-blue)](https://pypi.org/project/BackTranslation/#description)
 [![Downloads](https://pepy.tech/badge/backtranslation)](https://pepy.tech/project/backtranslation)
 [![license](https://img.shields.io/badge/license-MIT-green)](https://github.com/hhhwwwuuu/BackTranslation/blob/main/LICENSE)
 
@@ -82,13 +82,18 @@ Since Baidu provides the different language code, it will be updated soon.
 
 
 ## Version Information
-**Version 0.2.2: fix the services url for Google Translator.**
+**Version 0.3.1: fix some bugs for Baidu translator.**
+
+Version 0.2.2: fix the services url for Google Translator.
 
 Version 0.2.1: fix the small bug. From this version, the library googletrans version is [4.0.0rc1](https://pypi.org/project/googletrans/4.0.0rc1/).
 
 Version 0.2.0: support back-translation with Baidu API, and fix bugs
 
 Version 0.1.0: support back-translation with googletrans library
+
+## Contribution
+Welcome to contribute BackTranslation library!
 
 ## reference
 - [googletrans](https://py-googletrans.readthedocs.io/en/latest/)
