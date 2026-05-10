@@ -1,9 +1,14 @@
 from distutils.core import setup
 import setuptools
+import os
+
+# In CI, version is driven by the git tag (e.g. v0.3.2 -> 0.3.2).
+# Locally falls back to 0.0.0.dev so the package can still be installed.
+version = os.environ.get('GITHUB_REF_NAME', '0.0.0.dev').lstrip('v')
 
 setup(
     name = 'BackTranslation',
-    version = "0.3.1",
+    version = version,
     author = "Zhiqiang Wu",
     author_email = "wzq0515@gmail.com",
     license = "MIT",

@@ -49,24 +49,44 @@ class BackTranslation(object):
             raise ValueError("'{}': INVALID transited language.".format(tmp))
 
         if src == tmp:
-            raise ValueError("Transited language ({tmp}) should different from srouce language ({src}).".format(
-                tmp=self.langCodes[tmp], src=self.langCodes[src]))
+            raise ValueError("Transited language ({tmp}) should different from source language ({src}).".format(
+                tmp=tmp, src=src))
 
         # check the length of text
         if len(text) > self.MAX_LENGTH:
             original_sentences = self._split_segement(sent_tokenize(text))
 
-            t_text = self.translator.translate(original_sentences, src=src, dest=tmp)
+            try:
+                t_text = self.translator.translate(original_sentences, src=src, dest=tmp)
+            except httpcore.ConnectTimeout:
+                raise httpcore.ConnectTimeout("Connection timed out. If you are blocked by Google, try using the 'proxies' parameter or a different 'url'.")
+            except Exception as e:
+                raise Exception("Translation failed (try increasing the 'sleeping' parameter): {}".format(e))
             tran_text = ' '.join([t.text for t in t_text])
             time.sleep(sleeping)
-            r_text = self.translator.translate([t.text for t in t_text], src=tmp, dest=src)
+            try:
+                r_text = self.translator.translate([t.text for t in t_text], src=tmp, dest=src)
+            except httpcore.ConnectTimeout:
+                raise httpcore.ConnectTimeout("Connection timed out. If you are blocked by Google, try using the 'proxies' parameter or a different 'url'.")
+            except Exception as e:
+                raise Exception("Back-translation failed (try increasing the 'sleeping' parameter): {}".format(e))
             back_text = ' '.join([r.text for r in r_text])
             back_text.rstrip()
         else:
-            mid_text = self.translator.translate(text, src=src, dest=tmp)
+            try:
+                mid_text = self.translator.translate(text, src=src, dest=tmp)
+            except httpcore.ConnectTimeout:
+                raise httpcore.ConnectTimeout("Connection timed out. If you are blocked by Google, try using the 'proxies' parameter or a different 'url'.")
+            except Exception as e:
+                raise Exception("Translation failed (try increasing the 'sleeping' parameter): {}".format(e))
             tran_text = mid_text.text
             time.sleep(sleeping)  # Sleep between translation
-            result_text = self.translator.translate(tran_text, src=tmp, dest=src)
+            try:
+                result_text = self.translator.translate(tran_text, src=tmp, dest=src)
+            except httpcore.ConnectTimeout:
+                raise httpcore.ConnectTimeout("Connection timed out. If you are blocked by Google, try using the 'proxies' parameter or a different 'url'.")
+            except Exception as e:
+                raise Exception("Back-translation failed (try increasing the 'sleeping' parameter): {}".format(e))
             back_text = result_text.text
         result = Translated(src_lang=src, tmp_lang=tmp, text=text, trans_text=tran_text, back_text=back_text)
         return result

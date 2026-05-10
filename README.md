@@ -28,7 +28,7 @@ Parameters:
 * **text**: required. Original text that need to do back translation.
 * **src**: option. Source language code of original text. If this parameter is None, the method will detect the language of text automatically. (Default: None)
 * **tmp**: option. Middle language code. If this parameter is None, the method will pick one of two languages which is different from src.
-* **sleeping**: option. It is a timer to limite the speed of back-translation to avoid the limitation of Google.  (Default: 0)
+* **sleeping**: option. It is a timer to limit the speed of back-translation to avoid Google rate limits (HTTP 429). Increase this value if you encounter errors after many translations. (Default: 0)
 
 Return parameter: object _Translated_.
 
@@ -41,13 +41,32 @@ Attributes:
 
 ```python
 from BackTranslation import BackTranslation
+trans = BackTranslation()
+result = trans.translate('hello', src='en', tmp='zh-cn')
+print(result.result_text)
+# 'Hello there'
+```
+
+Complete example with auto language detection:
+```python
+from BackTranslation import BackTranslation
+trans = BackTranslation()
+result = trans.translate('Anh ấy đã chữa khỏi cảm cúm bằng aspirin.')
+print(result.src)         # 'vi'
+print(result.tmp)         # 'en'
+print(result.tran_text)   # intermediate translation
+print(result.result_text) # back-translated result
+```
+
+If Google blocks your IP, you can provide alternative service URLs or a proxy:
+```python
+from BackTranslation import BackTranslation
 trans = BackTranslation(url=[
       'translate.google.com',
       'translate.google.co.kr',
     ], proxies={'http': '127.0.0.1:1234', 'http://host.name': '127.0.0.1:4012'})
-result = trans.translate('hello', src='en', tmp = 'zh-cn')
+result = trans.translate('hello', src='en', tmp='zh-cn')
 print(result.result_text)
-# 'Hello there'
 ```
 
 
@@ -69,12 +88,14 @@ trans.searchLanguage('Chinese')
 To use this stable translation, you are required to register in [Baidu Translation API]((http://api.fanyi.baidu.com/)) for getting your own appID.
 It supports 2 million chacters per day for free.
 _Note: Currently, they only support Chinese phone number to register the accout._
+* **sleeping**: option. Baidu standard API allows only 1 request per second (QPS limit). Set `sleeping=1` (default) to stay within the limit. Increase if you encounter errors. (Default: 1)
+
 ````python
 from BackTranslation import BackTranslation_Baidu
 trans = BackTranslation_Baidu(appid='YOUR APPID', secretKey='YOUR SECRETKEY')
 result = trans.translate('hello', src='auto', tmp='zh')
-print(result.result_text)
-# 'hello'
+print(result.tran_text)   # intermediate translation
+print(result.result_text) # back-translated result
 trans.closeHTTP()
 ```` 
 #### Seach language code
