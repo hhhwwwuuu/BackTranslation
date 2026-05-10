@@ -3,6 +3,7 @@ import hashlib
 import urllib
 import random
 import json
+import time
 
 import nltk
 from nltk.tokenize import sent_tokenize
@@ -30,7 +31,7 @@ class BackTranslation_Baidu(object):
         self.httpClient = http.client.HTTPConnection('api.fanyi.baidu.com')
         self.queryURL = '/api/trans/vip/translate'
 
-    def translate(self, text, src='auto', tmp=None):
+    def translate(self, text, src='auto', tmp=None, sleeping=1):
         if src == 'auto':
             src = self._get_srcLang(self._sendRequest(text, src, 'en'))
 
@@ -57,14 +58,17 @@ class BackTranslation_Baidu(object):
                 # language A --> language B
                 mid = self._get_translatedText(self._sendRequest(sentence, src, tmp))
                 tran_text.append(mid)
+                time.sleep(sleeping)
 
                 # language B --> language A
                 back_text.append(self._get_translatedText(self._sendRequest(mid, tmp, src)))
+                time.sleep(sleeping)
             tran_text = ' '.join(tran_text)
             back_text = ' '.join(back_text)
         else:
             tran_text = self._get_translatedText(self._sendRequest(text, src, tmp))
-            back_text = self._get_translatedText(self._sendRequest(text, tmp, src))
+            time.sleep(sleeping)
+            back_text = self._get_translatedText(self._sendRequest(tran_text, tmp, src))
         result = Translated(src_lang=src, tmp_lang=tmp, text=text, trans_text=tran_text, back_text=back_text)
         return result
 

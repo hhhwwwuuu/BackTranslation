@@ -16,7 +16,9 @@ class Translated(object):
 
 
     def __unicode__(self):
-        if len(self.result_text) > 30 :
+        if len(self.result_text.split(' ')) > 30:
             show_text = ' '.join(self.result_text.split(' ')[:30])
             show_text += '...'
-        return u'Trabslated(src={src}, tmp={tmp}, result_text={text})'.format(src=self.src, tmp=self.tmp, text = self.result_text)
+        else:
+            show_text = self.result_text
+        return u'Translated(src={src}, tmp={tmp}, result_text={text})'.format(src=self.src, tmp=self.tmp, text=show_text)
