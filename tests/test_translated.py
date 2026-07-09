@@ -11,8 +11,21 @@ def test_attributes():
     assert r.source_text == 'hello'
     assert r.src == 'en'
     assert r.tmp == 'zh-cn'
+    assert r.dst == 'zh-cn'
+    assert r.mode == 'back_translation'
     assert r.tran_text == '你好'
     assert r.result_text == 'hello there'
+
+
+def test_direct_attributes():
+    r = Translated(src_lang='en', tmp_lang='zh-cn', text='hello', trans_text='你好',
+                   back_text='你好', dst_lang='zh-cn', mode='direct')
+    assert r.src == 'en'
+    assert r.tmp == 'zh-cn'
+    assert r.dst == 'zh-cn'
+    assert r.mode == 'direct'
+    assert r.tran_text == '你好'
+    assert r.result_text == '你好'
 
 
 def test_str_short():

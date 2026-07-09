@@ -1,9 +1,9 @@
 # BackTranslation
-[![version](https://img.shields.io/badge/version-0.4.0-blue)](https://pypi.org/project/BackTranslation/#description)
+[![version](https://img.shields.io/badge/version-0.5.0-blue)](https://pypi.org/project/BackTranslation/#description)
 [![Downloads](https://pepy.tech/badge/backtranslation)](https://pepy.tech/project/backtranslation)
 [![license](https://img.shields.io/badge/license-MIT-green)](https://github.com/hhhwwwuuu/BackTranslation/blob/main/LICENSE)
 
-BackTranslation is a python library that implemented to back translate the words among any two languages. This utilizes [googletrans](https://py-googletrans.readthedocs.io/en/latest/) library and [Baidu Translation API](http://api.fanyi.baidu.com/) to translate the words.
+BackTranslation is a python library that implements back translation and direct translation among languages. It utilizes the [googletrans](https://py-googletrans.readthedocs.io/en/latest/) library and [Baidu Translation API](http://api.fanyi.baidu.com/) to translate text.
 
 Since there is an error in current verison of googletrans, you have to create only one instance to do back-translation for your work. Otherwise, it is easy to cause a bug from multi-requests. We will keep implementing this library with other translator libraries soon.
 
@@ -18,6 +18,37 @@ $ pip install BackTranslation
 
 
 ## Usage
+### Direct translation with googletrans
+Translate text from language A directly to language B without translating it back.
+
+Parameters:
+* **url**: option. provide a list of services urls for translation if need. Default url is _translate.google.com_.
+* **proxies**: Optional. Proxies configuration. Dictionary mapping protocol or protocol and host to the URL of the proxy.
+  i.e. proxies = {'http': '127.0.0.1:1234', 'http://host.name': '127.0.0.1:4012'}
+* **text**: required. Original text that need to translate.
+* **src**: option. Source language code of original text. If this parameter is None, the method will detect the language of text automatically. (Default: None)
+* **dst**: required. Destination language code.
+* **sleeping**: option. Kept for API consistency. Direct translation only sends the A-to-B request. (Default: 0)
+
+Return parameter: object _Translated_.
+
+Attributes:
+* source_text: original sentence.
+* src: the language of original sentence.
+* dst: the target language.
+* tmp: the same as dst for direct translation.
+* tran_text: translated result in dst language.
+* result_text: translated result in dst language.
+* mode: _direct_.
+
+```python
+from BackTranslation import BackTranslation
+trans = BackTranslation()
+result = trans.direct_translate('hello', src='en', dst='zh-cn')
+print(result.result_text)
+# '你好'
+```
+
 ### Backtranslation with googletrans
 Translate the original text to other language and translate back to augment the diversity of data in NLP research.
 
@@ -36,8 +67,10 @@ Attributes:
 * source_text: original sentence.
 * src: the language of original sentence
 * tmp: the target language as middle man
-* trans_text: intermediate result
-* back_text: back-tranlsated result
+* dst: the same as tmp for back-translation
+* tran_text: intermediate result
+* result_text: back-translated result
+* mode: _back_translation_
 
 ```python
 from BackTranslation import BackTranslation
@@ -82,7 +115,9 @@ Parameters:
 from BackTranslation import BackTranslation
 trans = BackTranslation()
 trans.searchLanguage('Chinese')
-# {'chinese (simplified)': 'zh-cn', 'chinese (traditional)': 'zh-tw'}
+# {'chinese (simplified)': 'zh-cn', 'chinese (traditional)': 'zh-tw', 'chinese (cantonese)': 'yue'}
+trans.searchLanguage('Cantonese')
+# {'chinese (cantonese)': 'yue'}
 ```
 ### Backtranslation_Baidu with Baidu Translation API
 To use this stable translation, you are required to register in [Baidu Translation API]((http://api.fanyi.baidu.com/)) for getting your own appID.
@@ -90,6 +125,16 @@ It supports 2 million chacters per day for free.
 _Note: Currently, they only support Chinese phone number to register the accout._
 * **sleeping**: option. Baidu standard API allows only 1 request per second (QPS limit). Set `sleeping=1` (default) to stay within the limit. Increase if you encounter errors. (Default: 1)
 
+Direct translation:
+````python
+from BackTranslation import BackTranslation_Baidu
+trans = BackTranslation_Baidu(appid='YOUR APPID', secretKey='YOUR SECRETKEY')
+result = trans.direct_translate('hello', src='en', dst='zh')
+print(result.result_text) # direct translated result
+trans.closeHTTP()
+````
+
+Back-translation:
 ````python
 from BackTranslation import BackTranslation_Baidu
 trans = BackTranslation_Baidu(appid='YOUR APPID', secretKey='YOUR SECRETKEY')
@@ -103,7 +148,9 @@ Since Baidu provides the different language code, it will be updated soon.
 
 
 ## Version Information
-**Version 0.4.0: fix bugs (#1 #2 #3 #4 #6), add automated tests and CI/CD pipeline.**
+**Version 0.5.0: add direct translation APIs for Google and Baidu translators, keep existing back-translation behavior compatible, extend `Translated` with `dst` and `mode`, add Cantonese (`yue`) language support, and update tests and documentation.**
+
+Version 0.4.0: fix bugs (#1 #2 #3 #4 #6), add automated tests and CI/CD pipeline.
 
 Version 0.3.1: fix some bugs for Baidu translator.
 

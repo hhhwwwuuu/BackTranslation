@@ -15,6 +15,7 @@ LANG_CODES = {
     'chichewa': 'ny',
     'chinese (simplified)': 'zh-cn',
     'chinese (traditional)': 'zh-tw',
+    'chinese (cantonese)': 'yue',
     'corsican': 'co',
     'croatian': 'hr',
     'czech': 'cs',

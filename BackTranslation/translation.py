@@ -31,12 +31,8 @@ class BackTranslation(object):
         self.MAX_LENGTH = 5000
 
     def translate(self, text, src=None, tmp=None, sleeping=0):
-
-        if not src:
-            src = self.translator.detect(text).lang
-
-        if src.lower() not in self.Languages:
-            raise ValueError("'{}': INVALID source language.".format(src))
+        src = self._resolve_src(text, src)
+        self._validate_language(src, 'source')
 
         # if tmp is null, set a default language for tmp.
         if not tmp:
@@ -45,51 +41,73 @@ class BackTranslation(object):
             else:
                 tmp = 'en'
 
-        if tmp not in self.Languages:
-            raise ValueError("'{}': INVALID transited language.".format(tmp))
-
-        if src == tmp:
-            raise ValueError("Transited language ({tmp}) should different from source language ({src}).".format(
-                tmp=tmp, src=src))
+        self._validate_language(tmp, 'transited')
+        self._validate_different(src, tmp, 'Transited')
 
         # check the length of text
         if len(text) > self.MAX_LENGTH:
             original_sentences = self._split_segement(sent_tokenize(text))
 
-            try:
-                t_text = self.translator.translate(original_sentences, src=src, dest=tmp)
-            except httpcore.ConnectTimeout:
-                raise httpcore.ConnectTimeout("Connection timed out. If you are blocked by Google, try using the 'proxies' parameter or a different 'url'.")
-            except Exception as e:
-                raise Exception("Translation failed (try increasing the 'sleeping' parameter): {}".format(e))
+            t_text = self._translate_with_google(original_sentences, src, tmp, 'Translation')
             tran_text = ' '.join([t.text for t in t_text])
             time.sleep(sleeping)
-            try:
-                r_text = self.translator.translate([t.text for t in t_text], src=tmp, dest=src)
-            except httpcore.ConnectTimeout:
-                raise httpcore.ConnectTimeout("Connection timed out. If you are blocked by Google, try using the 'proxies' parameter or a different 'url'.")
-            except Exception as e:
-                raise Exception("Back-translation failed (try increasing the 'sleeping' parameter): {}".format(e))
+            r_text = self._translate_with_google([t.text for t in t_text], tmp, src, 'Back-translation')
             back_text = ' '.join([r.text for r in r_text])
             back_text.rstrip()
         else:
-            try:
-                mid_text = self.translator.translate(text, src=src, dest=tmp)
-            except httpcore.ConnectTimeout:
-                raise httpcore.ConnectTimeout("Connection timed out. If you are blocked by Google, try using the 'proxies' parameter or a different 'url'.")
-            except Exception as e:
-                raise Exception("Translation failed (try increasing the 'sleeping' parameter): {}".format(e))
+            mid_text = self._translate_with_google(text, src, tmp, 'Translation')
             tran_text = mid_text.text
             time.sleep(sleeping)  # Sleep between translation
-            try:
-                result_text = self.translator.translate(tran_text, src=tmp, dest=src)
-            except httpcore.ConnectTimeout:
-                raise httpcore.ConnectTimeout("Connection timed out. If you are blocked by Google, try using the 'proxies' parameter or a different 'url'.")
-            except Exception as e:
-                raise Exception("Back-translation failed (try increasing the 'sleeping' parameter): {}".format(e))
+            result_text = self._translate_with_google(tran_text, tmp, src, 'Back-translation')
             back_text = result_text.text
-        result = Translated(src_lang=src, tmp_lang=tmp, text=text, trans_text=tran_text, back_text=back_text)
+        result = Translated(src_lang=src, tmp_lang=tmp, text=text, trans_text=tran_text, back_text=back_text,
+                            dst_lang=tmp, mode='back_translation')
         return result
+
+    def direct_translate(self, text, src=None, dst=None, sleeping=0):
+        if not dst:
+            raise ValueError("destination language is required")
+
+        src = self._resolve_src(text, src)
+
+        self._validate_language(src, 'source')
+        self._validate_language(dst, 'destination')
+        self._validate_different(src, dst, 'Destination')
+
+        if len(text) > self.MAX_LENGTH:
+            original_sentences = self._split_segement(sent_tokenize(text))
+            translated_text = self._translate_with_google(original_sentences, src, dst, 'Translation')
+            result_text = ' '.join([t.text for t in translated_text])
+        else:
+            translated_text = self._translate_with_google(text, src, dst, 'Translation')
+            result_text = translated_text.text
+
+        result = Translated(src_lang=src, tmp_lang=dst, text=text, trans_text=result_text, back_text=result_text,
+                            dst_lang=dst, mode='direct')
+        return result
+
+    def _resolve_src(self, text, src):
+        if not src:
+            return self.translator.detect(text).lang
+        return src
+
+    def _validate_language(self, language, language_type):
+        if language.lower() not in self.Languages:
+            raise ValueError("'{}': INVALID {} language.".format(language, language_type))
+
+    def _validate_different(self, src, dst, dst_label):
+        if src == dst:
+            raise ValueError("{} language ({dst}) should different from source language ({src}).".format(
+                dst_label, dst=dst, src=src))
+
+    def _translate_with_google(self, text, src, dst, action):
+        try:
+            return self.translator.translate(text, src=src, dest=dst)
+        except httpcore.ConnectTimeout:
+            raise httpcore.ConnectTimeout(
+                "Connection timed out. If you are blocked by Google, try using the 'proxies' parameter or a different 'url'.")
+        except Exception as e:
+            raise Exception("{} failed (try increasing the 'sleeping' parameter): {}".format(action, e))
 
     def _split_segement(self, sentences):
         """

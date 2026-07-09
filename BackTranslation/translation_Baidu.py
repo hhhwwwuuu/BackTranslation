@@ -72,6 +72,48 @@ class BackTranslation_Baidu(object):
         result = Translated(src_lang=src, tmp_lang=tmp, text=text, trans_text=tran_text, back_text=back_text)
         return result
 
+    def direct_translate(self, text, src='auto', dst=None, sleeping=1):
+        if not dst:
+            raise ValueError("destination language is required")
+
+        if src == dst:
+            raise ValueError(
+                "Destination language ({dst}) should different from source language ({src}).".format(dst=dst, src=src))
+
+        if len(text.encode('utf-8')) > self.MAX_LENGTH:
+            original_sentences = [
+                sentence for sentence in self._split_segement(sent_tokenize(text))
+                if sentence != ""
+            ]
+            tran_text = []
+            resolved_src = src
+            for index, sentence in enumerate(original_sentences):
+                result = self._sendRequest(sentence, resolved_src, dst)
+                if resolved_src == 'auto':
+                    resolved_src = self._get_srcLang(result)
+                    if resolved_src == dst:
+                        raise ValueError(
+                            "Destination language ({dst}) should different from source language ({src}).".format(
+                                dst=dst, src=resolved_src))
+                tran_text.append(self._get_translatedText(result))
+                if index < len(original_sentences) - 1:
+                    time.sleep(sleeping)
+            tran_text = ' '.join(tran_text)
+            src = resolved_src
+        else:
+            result = self._sendRequest(text, src, dst)
+            if src == 'auto':
+                src = self._get_srcLang(result)
+                if src == dst:
+                    raise ValueError(
+                        "Destination language ({dst}) should different from source language ({src}).".format(
+                            dst=dst, src=src))
+            tran_text = self._get_translatedText(result)
+
+        result = Translated(src_lang=src, tmp_lang=dst, text=text, trans_text=tran_text, back_text=tran_text,
+                            dst_lang=dst, mode='direct')
+        return result
+
     def _sendRequest(self, text, src, tmp):
         salt = random.randint(32768, 65536)
         sign = hashlib.md5((self.appid + text + str(salt) + self.secretKey).encode()).hexdigest()
